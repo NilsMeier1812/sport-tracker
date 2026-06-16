@@ -7,8 +7,8 @@
 //  daher darf dieser Key im Code stehen und deployed werden.
 // =====================================================================
 
-export const SUPABASE_URL = 'https://DEIN-PROJEKT.supabase.co';
-export const SUPABASE_ANON_KEY = 'DEIN-ANON-PUBLIC-KEY';
+export const SUPABASE_URL = 'https://lboxlxzivkburggucknf.supabase.co';
+export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxib3hseHppdmtidXJnZ3Vja25mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE2Mzc2OTgsImV4cCI6MjA5NzIxMzY5OH0.89Prjmdil84MPelq-SQutz2mSbSrB3h4PFeMpuhn1Zg';
 
 // Optionaler Name fuer den Wettbewerb (erscheint in der Kopfzeile).
 export const APP_TITLE = 'Sport-Duell';
