@@ -74,13 +74,13 @@ function playerCard(profile, { total, leader }) {
     return el(
       'div',
       { class: 'player-card empty' },
-      el('div', { class: 'avatar', style: { background: '#2a2c44' } }, '➕'),
+      el('div', { class: 'avatar', style: { background: '#efe2c0' } }, '➕'),
       el('div', { class: 'player-name' }, 'Frei'),
       el('div', { class: 'player-sub muted' }, 'Wartet auf zweite Person'),
     );
   }
   const streak = streakOf(profile.id);
-  const color = profile.color || '#6c5ce7';
+  const color = profile.color || '#1f4d3a';
   return el(
     'div',
     { class: `player-card${leader ? ' leader' : ''}`, style: { '--p-color': color } },
@@ -105,8 +105,8 @@ function playerCard(profile, { total, leader }) {
 function standingsBar(a, b, totalA, totalB) {
   const sum = totalA + totalB;
   const pctA = sum > 0 ? Math.round((totalA / sum) * 100) : 50;
-  const colorA = (a && a.color) || '#6c5ce7';
-  const colorB = (b && b.color) || '#e84393';
+  const colorA = (a && a.color) || '#1f4d3a';
+  const colorB = (b && b.color) || '#c8501e';
   const bar = el(
     'div',
     { class: 'bar' },
@@ -127,7 +127,7 @@ function standingsBar(a, b, totalA, totalB) {
 function weekStat(profile, pts) {
   return el(
     'div',
-    { class: 'week-stat', style: { '--p-color': profile.color || '#6c5ce7' } },
+    { class: 'week-stat', style: { '--p-color': profile.color || '#1f4d3a' } },
     el('span', { class: 'ws-emoji' }, profile.emoji || '🦊'),
     el('span', { class: 'ws-num' }, formatPoints(pts)),
     el('span', { class: 'ws-name muted' }, profile.display_name),
@@ -146,7 +146,7 @@ function streakDetail(profile) {
   const info = map[s.status] || map.none;
   return el(
     'div',
-    { class: `card streak-row ${info.cls}`, style: { '--p-color': profile.color || '#6c5ce7' } },
+    { class: `card streak-row ${info.cls}`, style: { '--p-color': profile.color || '#1f4d3a' } },
     el('span', { class: 'sr-emoji' }, profile.emoji || '🦊'),
     el(
       'div',
@@ -175,7 +175,7 @@ function recentFeed(ctx) {
         { class: 'feed-item' },
         el(
           'span',
-          { class: 'feed-avatar', style: { background: (p && p.color) || '#2a2c44' } },
+          { class: 'feed-avatar', style: { background: (p && p.color) || '#efe2c0' } },
           (type && type.emoji) || '🏅',
         ),
         el(

@@ -100,7 +100,7 @@ function historyItem(act, refresh) {
 
   return el(
     'div',
-    { class: 'history-item', style: { '--p-color': (p && p.color) || '#6c5ce7' } },
+    { class: 'history-item', style: { '--p-color': (p && p.color) || '#1f4d3a' } },
     el('span', { class: 'hi-avatar' }, (type && type.emoji) || '🏅'),
     el(
       'div',

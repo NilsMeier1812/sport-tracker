@@ -13,7 +13,7 @@ create table if not exists public.profiles (
   id           uuid primary key references auth.users (id) on delete cascade,
   display_name text not null default 'Spieler',
   emoji        text not null default '🦊',
-  color        text not null default '#6c5ce7',
+  color        text not null default '#1f4d3a',
   created_at   timestamptz not null default now()
 );
 

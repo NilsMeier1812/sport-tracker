@@ -1,94 +1,101 @@
 #!/usr/bin/env python3
-"""Erzeugt die PWA-Icons (Flamme auf Farbverlauf) mit Pillow.
+"""Erzeugt die PWA-Icons im Retro-Varsity-Stil mit Pillow.
 
-Aufruf:  python3 scripts/gen_icons.py
-Ergebnis: PNGs in icons/
+Echte Flamme (aus Bezier-Pfaden) auf Burnt-Orange-Badge mit gruenem Rand.
+Aufruf:  python3 scripts/gen_icons.py   ->  PNGs in icons/
 """
-import math
 import os
 from PIL import Image, ImageDraw
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "icons")
 SS = 4  # Supersampling fuer glatte Kanten
 
-# Farbverlauf (oben links -> unten rechts): Orange -> Pink -> Lila
-C0 = (255, 154, 61)
-C1 = (255, 77, 141)
-C2 = (123, 92, 255)
+ORANGE = (200, 80, 30)
+GREEN = (31, 77, 58)
+CREAM = (255, 250, 239)
+GOLD = (217, 154, 28)
 
-WHITE = (255, 255, 255)
-GOLD = (255, 210, 63)
+# Flamme in 0..100 Koordinaten (y nach unten). Spitze oben, mit Zungen.
+FLAME_OUTER = [
+    ("M", 54, 8),
+    ("C", 54, 24, 64, 28, 60, 40),
+    ("C", 72, 34, 74, 50, 66, 58),
+    ("C", 84, 62, 82, 86, 58, 92),
+    ("C", 53, 94, 47, 94, 42, 91),
+    ("C", 20, 82, 22, 58, 36, 52),
+    ("C", 30, 44, 33, 30, 44, 33),
+    ("C", 46, 24, 50, 16, 54, 8),
+    ("Z",),
+]
+FLAME_INNER = [
+    ("M", 52, 50),
+    ("C", 52, 60, 58, 63, 55, 72),
+    ("C", 64, 68, 63, 84, 52, 88),
+    ("C", 48, 90, 44, 89, 42, 86),
+    ("C", 34, 80, 38, 65, 47, 63),
+    ("C", 49, 58, 49, 54, 52, 50),
+    ("Z",),
+]
 
 
-def lerp(a, b, t):
-    return tuple(round(a[i] + (b[i] - a[i]) * t) for i in range(3))
+def cubic(p0, p1, p2, p3, t):
+    mt = 1 - t
+    x = mt**3 * p0[0] + 3 * mt * mt * t * p1[0] + 3 * mt * t * t * p2[0] + t**3 * p3[0]
+    y = mt**3 * p0[1] + 3 * mt * mt * t * p1[1] + 3 * mt * t * t * p2[1] + t**3 * p3[1]
+    return (x, y)
 
 
-def grad3(t):
-    return lerp(C0, C1, t * 2) if t < 0.5 else lerp(C1, C2, (t - 0.5) * 2)
-
-
-def gradient(size):
-    """Diagonaler 3-Stopp-Verlauf, klein berechnet und hochskaliert (schnell)."""
-    n = 64
-    small = Image.new("RGB", (n, n))
-    px = small.load()
-    for y in range(n):
-        for x in range(n):
-            px[x, y] = grad3((x + y) / (2 * (n - 1)))
-    return small.resize((size, size), Image.BILINEAR)
-
-
-def teardrop(n=240, m=2.6):
+def sample(commands, steps=30):
     pts = []
-    for i in range(n + 1):
-        t = 2 * math.pi * i / n
-        x = math.cos(t)
-        y = math.sin(t) * (math.sin(t / 2) ** m)
-        pts.append((-y, x))  # 90 Grad drehen -> Spitze zeigt nach oben
+    cur = None
+    for c in commands:
+        if c[0] == "M":
+            cur = (c[1], c[2])
+            pts.append(cur)
+        elif c[0] == "C":
+            p0 = cur
+            p1, p2, p3 = (c[1], c[2]), (c[3], c[4]), (c[5], c[6])
+            for i in range(1, steps + 1):
+                pts.append(cubic(p0, p1, p2, p3, i / steps))
+            cur = p3
     return pts
 
 
-def map_points(pts, box):
-    x0, y0, x1, y1 = box
+def transform_for(pts, box):
     xs = [p[0] for p in pts]
     ys = [p[1] for p in pts]
     minx, maxx, miny, maxy = min(xs), max(xs), min(ys), max(ys)
     w, h = maxx - minx, maxy - miny
-    scale = min((x1 - x0) / w, (y1 - y0) / h)
-    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
-    mx, my = (minx + maxx) / 2, (miny + maxy) / 2
-    # y spiegeln (Mathe-y zeigt nach oben, Bild-y nach unten)
-    return [(cx + (x - mx) * scale, cy - (y - my) * scale) for (x, y) in pts]
+    x0, y0, x1, y1 = box
+    s = min((x1 - x0) / w, (y1 - y0) / h)
+    ox = x0 + ((x1 - x0) - w * s) / 2 - minx * s
+    oy = y0 + ((y1 - y0) - h * s) / 2 - miny * s
+    return lambda p: (p[0] * s + ox, p[1] * s + oy)
 
 
 def render(size, maskable):
     ss = size * SS
-    base = gradient(ss).convert("RGBA")
+    base = Image.new("RGBA", (ss, ss), ORANGE + (255,))
     draw = ImageDraw.Draw(base)
 
-    flame = teardrop()
-    fh = 0.54 if maskable else 0.64  # Anteil der Flammenhoehe
-    fw = fh * 0.92
-    bx0 = ss * (0.5 - fw / 2)
-    bx1 = ss * (0.5 + fw / 2)
-    by0 = ss * (0.5 - fh / 2)
-    by1 = ss * (0.5 + fh / 2)
-
-    outer = map_points(flame, (bx0, by0, bx1, by1))
-    draw.polygon(outer, fill=WHITE)
-
-    # Innere Flamme: kleiner und nach unten versetzt
-    iw = (bx1 - bx0) * 0.5
-    ih = (by1 - by0) * 0.55
-    icx = (bx0 + bx1) / 2
-    inner_box = (icx - iw / 2, by1 - ih - (by1 - by0) * 0.06, icx + iw / 2, by1 - (by1 - by0) * 0.06)
-    inner = map_points(flame, inner_box)
-    draw.polygon(inner, fill=GOLD)
+    outer = sample(FLAME_OUTER)
+    inner = sample(FLAME_INNER)
+    box = (ss * 0.27, ss * 0.16, ss * 0.73, ss * 0.86) if maskable else (ss * 0.22, ss * 0.12, ss * 0.78, ss * 0.9)
+    tf = transform_for(outer, box)  # gleicher Transform fuer beide Pfade
+    draw.polygon([tf(p) for p in outer], fill=CREAM)
+    draw.polygon([tf(p) for p in inner], fill=GOLD)
 
     if not maskable:
+        bw = max(2, int(ss * 0.055))
+        r = int(ss * 0.22)
+        draw.rounded_rectangle(
+            [bw // 2, bw // 2, ss - 1 - bw // 2, ss - 1 - bw // 2],
+            radius=r,
+            outline=GREEN,
+            width=bw,
+        )
         mask = Image.new("L", (ss, ss), 0)
-        ImageDraw.Draw(mask).rounded_rectangle([0, 0, ss - 1, ss - 1], radius=int(ss * 0.22), fill=255)
+        ImageDraw.Draw(mask).rounded_rectangle([0, 0, ss - 1, ss - 1], radius=r, fill=255)
         base.putalpha(mask)
 
     return base.resize((size, size), Image.LANCZOS)
@@ -107,7 +114,7 @@ def main():
     for name, size, maskable, keep_alpha in jobs:
         img = render(size, maskable)
         if not keep_alpha:
-            bg = Image.new("RGB", img.size, C2)
+            bg = Image.new("RGB", img.size, ORANGE)
             bg.paste(img, mask=img.split()[3])
             img = bg
         img.save(os.path.join(OUT, name))
