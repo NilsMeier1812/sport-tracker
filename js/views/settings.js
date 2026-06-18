@@ -3,7 +3,7 @@ import { el, toast, openModal } from '../ui.js';
 import { state, saveMyProfile, addType, updateType } from '../store.js';
 
 const EMOJI_SUGGEST = ['🦊', '🐼', '🐯', '🦁', '🐺', '🐸', '🦄', '🐵', '💪', '⚡', '🔥', '🌟'];
-const COLOR_SUGGEST = ['#6c5ce7', '#e84393', '#00b894', '#0984e3', '#e17055', '#fdcb6e', '#a29bfe', '#ff7675'];
+const COLOR_SUGGEST = ['#1f4d3a', '#c8501e', '#d99a1c', '#7c2d12', '#2f6b4f', '#0f766e', '#b3331f', '#5b7553'];
 
 export function settingsView(ctx) {
   const view = el('section', { class: 'view view-settings' });
@@ -16,13 +16,13 @@ export function settingsView(ctx) {
 
 // ------------------------------ Profil -------------------------------
 function profileCard() {
-  const me = state.me || { display_name: '', emoji: '🦊', color: '#6c5ce7' };
+  const me = state.me || { display_name: '', emoji: '🦊', color: '#1f4d3a' };
 
   const nameInput = el('input', { class: 'input', type: 'text', maxlength: '24', value: me.display_name || '' });
   const emojiInput = el('input', { class: 'input emoji-input', type: 'text', value: me.emoji || '🦊' });
-  const colorInput = el('input', { class: 'color-input', type: 'color', value: me.color || '#6c5ce7' });
+  const colorInput = el('input', { class: 'color-input', type: 'color', value: me.color || '#1f4d3a' });
 
-  const preview = el('span', { class: 'avatar', style: { background: me.color || '#6c5ce7' } }, me.emoji || '🦊');
+  const preview = el('span', { class: 'avatar', style: { background: me.color || '#1f4d3a' } }, me.emoji || '🦊');
   const syncPreview = () => {
     preview.textContent = emojiInput.value || '🦊';
     preview.style.background = colorInput.value;

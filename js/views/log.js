@@ -16,7 +16,7 @@ export function logView(ctx) {
     el(
       'div',
       { class: 'log-head' },
-      el('span', { class: 'avatar sm', style: { background: (me && me.color) || '#6c5ce7' } }, (me && me.emoji) || '🦊'),
+      el('span', { class: 'avatar sm', style: { background: (me && me.color) || '#1f4d3a' } }, (me && me.emoji) || '🦊'),
       el('div', {}, el('div', { class: 'log-for' }, 'Eintrag für'), el('div', { class: 'log-name' }, (me && me.display_name) || 'dich')),
     ),
   );
