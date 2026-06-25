@@ -1,6 +1,6 @@
 // Service Worker – App-Shell offline verfuegbar machen.
 // Bei Aenderungen an den Dateien die Versionsnummer erhoehen.
-const VERSION = 'v2';
+const VERSION = 'v3';
 const SHELL_CACHE = `sport-duell-shell-${VERSION}`;
 const RUNTIME_CACHE = `sport-duell-runtime-${VERSION}`;
 

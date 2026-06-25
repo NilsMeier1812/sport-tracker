@@ -14,7 +14,7 @@ haltet eure **Streak** am Leben. Wer vorne liegt, trägt die Krone 👑.
 ## Funktionen
 
 - **Duell-Übersicht:** beide Spieler:innen nebeneinander, Punkte, Streaks, „diese Woche", Krone für die Führung
-- **Eintragen:** Sportart wählen, Dauer eingeben → Punkte werden live berechnet
+- **Eintragen:** Sportart wählen, Dauer eingeben → Punkte werden live berechnet; mit „Für beide" zählt eine gemeinsame Einheit für beide
 - **Verlauf:** alle Einheiten nach Tagen gruppiert, eigene bearbeiten/löschen
 - **Profil:** Name, Emoji und Farbe pro Person
 - **Sportarten verwalten:** Sportarten und ihren Punkte-Faktor in der App anpassen

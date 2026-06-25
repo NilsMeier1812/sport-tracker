@@ -93,9 +93,13 @@ drop policy if exists activities_select_auth on public.activities;
 create policy activities_select_auth on public.activities
   for select to authenticated using (true);
 
+-- Schreiben: eigene Eintraege immer; fuer "zusammen gemacht" duerfen die
+-- registrierten Personen auch fuereinander eintragen.
 drop policy if exists activities_insert_self on public.activities;
-create policy activities_insert_self on public.activities
-  for insert to authenticated with check (user_id = auth.uid());
+drop policy if exists activities_insert on public.activities;
+create policy activities_insert on public.activities
+  for insert to authenticated
+  with check (user_id in (select id from public.profiles));
 
 drop policy if exists activities_update_self on public.activities;
 create policy activities_update_self on public.activities
