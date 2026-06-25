@@ -77,17 +77,31 @@ export async function saveMyProfile({ display_name, emoji, color }) {
   await loadAll();
 }
 
-export async function addActivity({ activity_type_id, activity_date, duration_minutes, points, note }) {
-  const { error } = await supabase.from('activities').insert({
-    user_id: state.user.id,
+export async function addActivity({
+  activity_type_id,
+  activity_date,
+  duration_minutes,
+  points,
+  note,
+  forBoth = false,
+}) {
+  const base = {
     activity_type_id,
     activity_date,
     duration_minutes,
     points,
     note: note || null,
-  });
+  };
+  const rows = [{ ...base, user_id: state.user.id }];
+  if (forBoth) {
+    // Gemeinsame Einheit: zusaetzlich fuer die andere Person eintragen.
+    const partner = state.profiles.find((p) => p.id !== state.user.id);
+    if (partner) rows.push({ ...base, user_id: partner.id });
+  }
+  const { error } = await supabase.from('activities').insert(rows);
   check(error, 'Eintrag speichern fehlgeschlagen');
   await loadAll();
+  return rows.length;
 }
 
 export async function updateActivity(id, patch) {

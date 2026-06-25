@@ -1,8 +1,8 @@
 // views/log.js – Aktivitaet eintragen (dauer-basierte Punkte).
-import { el, toast } from '../ui.js';
+import { el, toast, toggleSwitch } from '../ui.js';
 import { calcPoints, formatPoints } from '../points.js';
 import { isoToday } from '../streak.js';
-import { state, activeTypes, addActivity } from '../store.js';
+import { state, players, activeTypes, addActivity } from '../store.js';
 
 const QUICK_MINUTES = [15, 30, 45, 60, 90];
 
@@ -122,11 +122,36 @@ export function logView(ctx) {
     submit.disabled = pts <= 0;
   }
 
+  // --- Fuer beide eintragen (gemeinsame Einheit) ----------------------
+  const partner = players()[1];
+  let forBoth = false;
+  const bothRow = partner
+    ? el(
+        'div',
+        { class: 'card both-row' },
+        el(
+          'div',
+          { class: 'both-text' },
+          el('span', { class: 'both-emoji' }, '🤝'),
+          el(
+            'div',
+            {},
+            el('div', { class: 'both-title' }, 'Zusammen gemacht?'),
+            el('div', { class: 'both-sub muted' }, `Zählt auch für ${partner.display_name}`),
+          ),
+        ),
+        toggleSwitch(false, (on) => {
+          forBoth = on;
+        }),
+      )
+    : null;
+
   form.append(
     field('Sportart', chips),
     field('Dauer (Minuten)', el('div', {}, durationInput, quick)),
     field('Wann?', dateInput),
     field('Notiz', noteInput),
+    ...(bothRow ? [bothRow] : []),
     el('div', { class: 'card preview-card' }, el('span', { class: 'muted' }, 'Das gibt'), preview),
     submit,
   );
@@ -143,14 +168,20 @@ export function logView(ctx) {
     submit.disabled = true;
     submit.textContent = 'Speichern …';
     try {
-      await addActivity({
+      const created = await addActivity({
         activity_type_id: sel.typeId,
         activity_date: sel.date,
         duration_minutes: sel.duration,
         points: pts,
         note: sel.note.trim(),
+        forBoth,
       });
-      toast(`Stark! +${formatPoints(pts)} Punkte 🔥`, 'success');
+      toast(
+        forBoth && created > 1
+          ? `Für beide eingetragen! +${formatPoints(pts)} 🔥`
+          : `Stark! +${formatPoints(pts)} Punkte 🔥`,
+        'success',
+      );
       ctx.navigate('dashboard');
     } catch (err) {
       console.error(err);

@@ -41,6 +41,27 @@ body {
   height: 100%;
 }
 
+html {
+  /* App-Verhalten statt Webseite: kein Pinch-/Doppeltipp-Zoom, kein
+     automatisches Text-Skalieren beim Drehen. */
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Doppeltipp-Zoom auf Bedienelementen unterbinden */
+button,
+.btn,
+.chip,
+.pill,
+.tab,
+.icon-btn,
+.swatch,
+.suggest,
+.switch {
+  touch-action: manipulation;
+}
+
 body {
   background-color: var(--paper);
   background-image: radial-gradient(rgba(31, 77, 58, 0.06) 1.2px, transparent 1.2px);
@@ -789,6 +810,31 @@ textarea.input {
   gap: 8px;
   margin-top: 10px;
 }
+.both-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.both-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.both-emoji {
+  font-size: 1.6rem;
+}
+.both-title {
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-size: 0.95rem;
+}
+.both-sub {
+  font-size: 0.8rem;
+}
+
 .preview-card {
   display: flex;
   align-items: center;

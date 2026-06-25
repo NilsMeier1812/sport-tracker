@@ -50,6 +50,13 @@ export function mount(node) {
   return root;
 }
 
+/** Ein/Aus-Schalter (gibt das <label> mit Checkbox zurueck). */
+export function toggleSwitch(checked, onChange) {
+  const input = el('input', { type: 'checkbox', ...(checked ? { checked: '' } : {}) });
+  input.addEventListener('change', () => onChange(input.checked));
+  return el('label', { class: 'switch' }, input, el('span', { class: 'slider' }));
+}
+
 // ------------------------------ Toasts -------------------------------
 function toastLayer() {
   let layer = document.getElementById('toast-layer');

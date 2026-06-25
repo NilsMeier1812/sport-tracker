@@ -184,6 +184,7 @@ function howItWorksCard() {
       el('li', {}, el('strong', {}, 'Punkte: '), 'Dauer × Faktor der Sportart. Längere und intensivere Einheiten geben mehr.'),
       el('li', {}, el('strong', {}, 'Streak: '), 'Jeder Tag mit Aktivität zählt +1. Ein Tag Pause ist erlaubt (zählt aber nicht hoch); zwei freie Tage am Stück setzen sie zurück.'),
       el('li', {}, el('strong', {}, 'Duell: '), 'Wer die meisten Punkte sammelt, führt – die Krone 👑 zeigt’s an.'),
+      el('li', {}, el('strong', {}, 'Zusammen: '), 'Gemeinsam trainiert? Beim Eintragen „Für beide" aktivieren – dann zählt die Einheit für euch beide.'),
     ),
   );
 }
