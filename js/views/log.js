@@ -4,7 +4,7 @@ import { calcPoints, formatPoints } from '../points.js';
 import { isoToday } from '../streak.js';
 import { state, players, activeTypes, addActivity } from '../store.js';
 
-const QUICK_MINUTES = [15, 30, 45, 60, 90];
+const QUICK_MINUTES = [5, 10, 15, 20, 30, 45];
 
 export function logView(ctx) {
   const types = activeTypes();
